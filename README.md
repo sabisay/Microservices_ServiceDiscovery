@@ -19,3 +19,31 @@ Docker simplifies application deployment by allowing developers to package appli
 <b>Consul:</b> A tool by HashiCorp that provides service discovery, health checking, and key-value storage. It is widely used for both service registration and distributed configuration.
 
 <b>Amalgam8:</b> An open-source service mesh developed by IBM for microservices. It provides service discovery, traffic routing, and fault tolerance for cloud-native applications.
+
+<br>
+
+<table>
+  <tr>
+    <th>Concept </th>
+    <th>What It Does? </th>
+    <th>Real Life Analogy</th>
+  </tr>
+  <tr>
+    <th>Image </th>
+    <th>Blueprint of your app & environment </th>
+    <th>Game installer (.exe)</th>
+  </tr><tr>
+    <th>Container </th>
+    <th>Running instance of an image </th>
+    <th>Open game window (running game)</th>
+  </tr>
+  <tr>
+    <th>Microservice </th>
+    <th>Self-contained business logic (small app) </th>
+    <th>Log-in client for a online game</th>
+  </tr><tr>
+    <th>Service Discovery </th>
+    <th>Finds other services dynamically via a registry </th>
+    <th>Address Book for services</th>
+  </tr>
+</table>

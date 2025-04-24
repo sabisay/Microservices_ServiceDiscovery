@@ -1,0 +1,48 @@
+
+services:
+  user-service:
+    build: ./user-service
+    ports:
+      - "5001:5001"
+    volumes:
+      - user_data:/app
+    environment:
+      - FLASK_ENV=development
+
+  product-service:
+    build: ./product-service
+    ports:
+      - "5002:5002"
+    volumes:
+      - product_data:/app
+    environment:
+      - FLASK_ENV=development
+
+  order-service:
+    build:
+      context: ./order-service
+    ports:
+      - "5003:5003"
+    volumes:
+      - order_data:/app
+    depends_on:
+      - user-service
+      - product-service
+      - notification-service
+    environment:
+      - FLASK_ENV=development
+      - USER_SERVICE_URL=http://user-service:5001
+      - PRODUCT_SERVICE_URL=http://product-service:5002
+      - NOTIFICATION_SERVICE_URL=http://notification-service:5004
+
+  notification-service:
+    build: ./notification-service
+    ports:
+      - "5004:5004"
+    environment:
+      - FLASK_ENV=development
+
+volumes:
+  user_data: {} 
+  product_data: {} 
+  order_data: {} 

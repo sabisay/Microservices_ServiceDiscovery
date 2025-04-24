@@ -1,0 +1,13 @@
+{
+    "service": {
+      "id": "order-service",
+      "name": "order-service",
+      "address": "order-service",
+      "port": 5003,
+      "check": {
+        "http": "http://order-service:5003/health",
+        "interval": "10s"
+      }
+    }
+  }
+  

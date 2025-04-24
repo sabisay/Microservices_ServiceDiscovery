@@ -1,0 +1,13 @@
+{
+    "service": {
+      "id": "user-service",
+      "name": "user-service",
+      "address": "user-service",
+      "port": 5001,
+      "check": {
+        "http": "http://user-service:5001/health",
+        "interval": "10s"
+      }
+    }
+  }
+  

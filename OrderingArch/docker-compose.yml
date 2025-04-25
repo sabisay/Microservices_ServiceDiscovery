@@ -1,5 +1,8 @@
-
 services:
+  eureka-server:
+    build: ../Eureka
+    ports:
+      - "8761:8761"
   user-service:
     build: ./user-service
     ports:
@@ -43,6 +46,6 @@ services:
       - FLASK_ENV=development
 
 volumes:
-  user_data: {} 
-  product_data: {} 
-  order_data: {} 
+  user_data: {}
+  product_data: {}
+  order_data: {}

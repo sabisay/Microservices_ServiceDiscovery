@@ -1,11 +1,15 @@
 from flask import Flask, jsonify, render_template, request, redirect, url_for
 import requests
+from service_registery import discover_service
 
 app = Flask(__name__)
 
-USER_SERVICE_URL = "http://user-service:5001"
-PRODUCT_SERVICE_URL = "http://product-service:5002"
-NOTIFICATION_SERVICE_URL = "http://notification-service:5004"
+# USER_SERVICE_URL = "http://user-service:5001"
+# PRODUCT_SERVICE_URL = "http://product-service:5002"
+# NOTIFICATION_SERVICE_URL = "http://notification-service:5004"
+USER_SERVICE_URL = discover_service("user-service")
+PRODUCT_SERVICE_URL = discover_service("product-service")
+NOTIFICATION_SERVICE_URL = discover_service("notification-service")
 
 @app.route('/')
 def index():

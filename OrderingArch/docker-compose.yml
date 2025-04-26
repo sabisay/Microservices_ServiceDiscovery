@@ -8,6 +8,8 @@ services:
       - user_data:/app
     environment:
       - FLASK_ENV=development
+    networks:
+      - ms-network
 
   product-service:
     build: ./product-service
@@ -17,6 +19,9 @@ services:
       - product_data:/app
     environment:
       - FLASK_ENV=development
+    networks:
+      - ms-network
+
 
   order-service:
     build:
@@ -34,6 +39,8 @@ services:
       - USER_SERVICE_URL=http://user-service:5001
       - PRODUCT_SERVICE_URL=http://product-service:5002
       - NOTIFICATION_SERVICE_URL=http://notification-service:5004
+    networks:
+      - ms-network
 
   notification-service:
     build: ./notification-service
@@ -41,6 +48,8 @@ services:
       - "5004:5004"
     environment:
       - FLASK_ENV=development
+    networks:
+      - ms-network
   
   consul:
     image: hashicorp/consul:1.15.3
@@ -50,9 +59,15 @@ services:
     volumes:
       - ./consul_configs:/consul/config
     command: "agent -dev -client=0.0.0.0"
+    networks:
+      - ms-network
 
 
 volumes:
   user_data: {} 
   product_data: {} 
   order_data: {} 
+
+networks:
+  ms-network:
+    driver: bridge

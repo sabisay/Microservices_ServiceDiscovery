@@ -8,6 +8,8 @@ services:
       - user_data:/app
     environment:
       - FLASK_ENV=development
+    networks:
+      - ms-net
 
   product-service:
     build: ./product-service
@@ -17,6 +19,8 @@ services:
       - product_data:/app
     environment:
       - FLASK_ENV=development
+    networks:
+      - ms-net
 
   order-service:
     build:
@@ -34,6 +38,8 @@ services:
       - USER_SERVICE_URL=http://user-service:5001
       - PRODUCT_SERVICE_URL=http://product-service:5002
       - NOTIFICATION_SERVICE_URL=http://notification-service:5004
+    networks:
+      - ms-net
 
   notification-service:
     build: ./notification-service
@@ -41,8 +47,14 @@ services:
       - "5004:5004"
     environment:
       - FLASK_ENV=development
+    networks:
+      - ms-net
 
 volumes:
   user_data: {} 
   product_data: {} 
   order_data: {} 
+
+networks:
+  ms-net:
+    driver: bridge

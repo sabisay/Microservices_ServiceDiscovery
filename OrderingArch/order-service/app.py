@@ -1,11 +1,34 @@
 from flask import Flask, jsonify, render_template, request, redirect, url_for
 import requests
+import os
+import py_eureka_client.eureka_client as eureka_client  # <<< ekle
 
 app = Flask(__name__)
 
+# Eureka URL'yi environment'dan al
+EUREKA_URL = os.getenv("EUREKA_URL", "http://eureka-server:8761/eureka")
+
+# Servislerin adreslerini tanımlama (Eureka'dan çekmek istiyorsak bunu ileride değiştireceğiz)
 USER_SERVICE_URL = "http://user-service:5001"
 PRODUCT_SERVICE_URL = "http://product-service:5002"
 NOTIFICATION_SERVICE_URL = "http://notification-service:5004"
+
+# --- Eureka Register ---
+def register_to_eureka():
+    instance_host = "order-service"  # docker-compose service name
+
+    eureka_client.init(
+        eureka_server=EUREKA_URL,
+        app_name="order-service",
+        instance_host=instance_host,
+        instance_port=5003,
+        health_check_url=f"http://localhost:5003/health",
+        home_page_url=f"http://localhost:5003/",
+        status_page_url=f"http://localhost:5003/"
+    )
+
+register_to_eureka()
+# ------------------------
 
 @app.route('/')
 def index():
@@ -38,7 +61,6 @@ def create_order():
     requests.post(f"{NOTIFICATION_SERVICE_URL}/notify", json=notification_data)
 
     return redirect(url_for('index'))
-
 
 @app.route('/health')
 def health():

@@ -39,9 +39,9 @@ def register_to_eureka():
         app_name="notification-service",
         instance_host=instance_host,
         instance_port=5004,
-        health_check_url=f"http://{instance_host}:5004/health",
-        home_page_url=f"http://{instance_host}:5004/",
-        status_page_url=f"http://{instance_host}:5004/"
+        health_check_url=f"http://localhost:5004/health",
+        home_page_url=f"http://localhost:5004/",
+        status_page_url=f"http://localhost:5004/"
     )
 
 

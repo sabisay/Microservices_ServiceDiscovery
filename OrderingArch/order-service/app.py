@@ -26,9 +26,9 @@ def register_to_eureka():
         app_name="order-service",
         instance_host=instance_host,
         instance_port=5003,
-        health_check_url=f"http://{instance_host}:5003/health",
-        home_page_url=f"http://{instance_host}:5003/",
-        status_page_url=f"http://{instance_host}:5003/"
+        health_check_url=f"http://localhost:5003/health",
+        home_page_url=f"http://localhost:5003/",
+        status_page_url=f"http://localhost:5003/"
     )
 
 
@@ -64,12 +64,13 @@ def discover_services():
 # Startup
 # -------------------
 
-# Register to Eureka immediately
-register_to_eureka()
+discover_services()
 
 # Wait a bit and then discover services (because they might not be up instantly)
 time.sleep(5)
-discover_services()
+
+# Register to Eureka immediately
+register_to_eureka()
 
 # -------------------
 # Routes

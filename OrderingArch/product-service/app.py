@@ -39,9 +39,9 @@ def register_to_eureka():
         app_name="product-service",
         instance_host=instance_host,
         instance_port=5002,
-        health_check_url=f"http://{instance_host}:5002/health",
-        home_page_url=f"http://{instance_host}:5002/",
-        status_page_url=f"http://{instance_host}:5002/"
+        health_check_url=f"http://localhost:5002/health",
+        home_page_url=f"http://localhost:5002/",
+        status_page_url=f"http://localhost:5002/"
     )
 
 

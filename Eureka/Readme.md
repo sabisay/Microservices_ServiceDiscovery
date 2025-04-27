@@ -27,7 +27,7 @@ Spring Initializr üzerinden aşağıdaki bağımlılıklarla bir proje oluştur
 
 İndirilen proje dosyası içinde `...Application.java` dosyasını açarak gerekli anotasyonları eklediğinizden emin olun:
 
-```java
+java
 <pre>@EnableEurekaServer
 @SpringBootApplication
 public class EurekaServerApplication {
@@ -38,12 +38,12 @@ public class EurekaServerApplication {
 </pre>
 
 Terminal üzerinden proje klasörüne gidin ve aşağıdaki komut ile build alın:
-```bash
+bash
 <pre>./gradlew build</pre>
 
 ✅ Build sonrası build/ klasörü oluşacak ve Dockerfile gibi gerekli dosyalar hazır hale gelecektir.
 
-```src/main/resources/application.properties``` dosyasını şu şekilde güncelleyin:
+`src/main/resources/application.properties` dosyasını şu şekilde güncelleyin:
 <pre>server.port=8761
 
 eureka.client.register-with-eureka=false
@@ -62,7 +62,7 @@ eureka.client.fetch-registry=false
 
 Öncelikle bir venv oluşturup aktif edin:
 
-```bash
+bash
 <pre>
 python3 -m venv venv
 source venv/bin/activate
@@ -72,7 +72,7 @@ source venv/bin/activate
 
 py_eureka_client kütüphanesini kurun:
 
-```bash
+bash
 <pre>
 pip install py_eureka_client
 </pre>
@@ -88,7 +88,7 @@ py_eureka_client
 
 Her Flask servisine aşağıdaki kayıt metodunu ekleyin:
 
-```python
+python
 <pre>import py_eureka_client.eureka_client as eureka_client
 
 eureka_client.init(
@@ -98,4 +98,30 @@ eureka_client.init(
 )
 </pre>
 
-```Önemli: Servis adınız <pre>app_name</pre> ile birebir uyumlu olmalıdır.
+`Önemli: Servis adınız <pre>app_name</pre> ile birebir uyumlu olmalıdır.`
+
+### 🕸️ Servis Başlatma Sıralaması
+#### 🔹 Mikroservislerin doğru çalışabilmesi için servislerin aşağıdaki sırayla başlatılması gerekir:
+
+| Sıra | Servis           | Açıklama                                             |
+| :---: | :---------------- | :--------------------------------------------------- |
+| 1    | User Service      | Order servisi, User servisine ihtiyaç duyar.        |
+| 2    | Product Service   | Order servisi, Product servisine ihtiyaç duyar.     |
+| 3    | Order Service     | Bağımlı olduğu servisler (User/Product) çalışıyor olmalı. |
+
+---
+
+### ⚙️ Özet ve Ekstra Bilgiler
+
+| Bileşen               | Teknoloji              |
+| :--------------------- | :--------------------- |
+| Service Discovery      | Spring Boot Eureka Server |
+| Mikroservisler         | Flask (Python)         |
+| İletişim Sağlama       | py_eureka_client       |
+| Yapılandırma Aracı     | Gradle                 |
+| API Gateway (Opsiyonel)| [Opsiyonel olarak eklenebilir] |
+
+
+`Docker üzerinden Eureka Server'ı konteynerize etmek için hazır hale gelinmiştir.
+İlerleyen adımlarda API Gateway (Spring Cloud Gateway) veya Circuit Breaker (Resilience4j) entegre edilebilir.
+📢 Projenin sorunsuz ilerleyebilmesi için port çakışmalarına ve mikroservisler arasındaki bağımlılıklara dikkat edilmelidir!`

@@ -3,6 +3,7 @@ services:
     build: ../Eureka
     ports:
       - "8761:8761"
+
   user-service:
     build: ./user-service
     ports:
@@ -11,6 +12,7 @@ services:
       - user_data:/app
     environment:
       - FLASK_ENV=development
+      - EUREKA_URL=http://eureka-server:8761/eureka
 
   product-service:
     build: ./product-service
@@ -20,6 +22,15 @@ services:
       - product_data:/app
     environment:
       - FLASK_ENV=development
+      - EUREKA_URL=http://eureka-server:8761/eureka
+
+  notification-service:
+    build: ./notification-service
+    ports:
+      - "5004:5004"
+    environment:
+      - FLASK_ENV=development
+      - EUREKA_URL=http://eureka-server:8761/eureka
 
   order-service:
     build:
@@ -34,16 +45,7 @@ services:
       - notification-service
     environment:
       - FLASK_ENV=development
-      - USER_SERVICE_URL=http://user-service:5001
-      - PRODUCT_SERVICE_URL=http://product-service:5002
-      - NOTIFICATION_SERVICE_URL=http://notification-service:5004
-
-  notification-service:
-    build: ./notification-service
-    ports:
-      - "5004:5004"
-    environment:
-      - FLASK_ENV=development
+      - EUREKA_URL=http://eureka-server:8761/eureka
 
 volumes:
   user_data: {}

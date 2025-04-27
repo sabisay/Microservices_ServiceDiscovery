@@ -1,8 +1,18 @@
 import sqlite3
 from flask import Flask, jsonify, request, render_template, redirect, url_for
+import py_eureka_client.eureka_client as eureka_client
+import os
+import socket
 
-# Veritabanı dosyasının adı
+# Get Eureka server URL
+EUREKA_URL = os.getenv("EUREKA_URL", "http://eureka-server:8761/eureka")
+
+# Database file
 DATABASE = 'users.db'
+
+# -------------------
+# Database
+# -------------------
 
 def get_db():
     conn = sqlite3.connect(DATABASE)
@@ -12,12 +22,8 @@ def get_db():
 def init_db():
     conn = get_db()
     c = conn.cursor()
-    # Tabloyu oluştur (IF NOT EXISTS ile)
     c.execute('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL)')
-    # Başlangıç kullanıcılarını ekle (varsa görmezden gel) - ID'yi otomatik artan yapalım
     try:
-        # Var olup olmadığını kontrol etmeden eklemek yerine, belki de sadece ilk çalıştırmada eklemek daha mantıklı olabilir.
-        # Ama basitlik adına, mevcut kullanıcılar yoksa ekleyelim.
         c.execute("SELECT COUNT(*) FROM users")
         if c.fetchone()['COUNT(*)'] == 0:
             print("Initializing database with default users...")
@@ -28,55 +34,51 @@ def init_db():
         else:
             print("Database already contains users.")
     except sqlite3.Error as e:
-        print(f"Database error during init: {e}") # Hata olursa yazdır
+        print(f"Database error during init: {e}")
     finally:
         conn.close()
 
-# Uygulama başlamadan önce veritabanını başlat
+# Initialize database immediately
 init_db()
+
+# -------------------
+# Flask app
+# -------------------
 
 app = Flask(__name__, template_folder='templates')
 
-# API endpoint: JSON olarak kullanıcı listesi döner
 @app.route('/users')
 def get_users_api():
     conn = get_db()
     c = conn.cursor()
     c.execute('SELECT id, name FROM users')
-    # fetchall()'dan dönen Row nesnelerini dict'e çevir
     users = [dict(row) for row in c.fetchall()]
     conn.close()
     return jsonify(users)
 
-# Ana sayfa: Kullanıcıları listeleyen HTML sayfasını render eder
 @app.route('/')
 def home():
     conn = get_db()
     c = conn.cursor()
     c.execute('SELECT id, name FROM users')
-    # fetchall()'dan dönen Row nesnelerini doğrudan şablona gönderebiliriz (row_factory sayesinde)
-    # ya da güvenli tarafta kalıp dict'e çevirebiliriz:
     users = [dict(row) for row in c.fetchall()]
     conn.close()
-    # users değişkenini şablona gönder
     return render_template('users.html', users=users)
 
-# Yeni kullanıcı ekleme endpoint'i (POST metodu ile)
 @app.route('/add_user', methods=['POST'])
 def add_user():
-    name = request.form.get('name') # form'dan 'name' alanını al
-    if name: # İsim boş değilse
+    name = request.form.get('name')
+    if name:
         try:
             conn = get_db()
             c = conn.cursor()
             c.execute('INSERT INTO users (name) VALUES (?)', (name,))
             conn.commit()
         except sqlite3.Error as e:
-            print(f"Error adding user: {e}") # Hata olursa yazdır
+            print(f"Error adding user: {e}")
         finally:
             if conn:
                 conn.close()
-    # İşlem bittikten sonra ana sayfaya yönlendir
     return redirect(url_for('home'))
 
 @app.route('/users/<int:user_id>')
@@ -91,15 +93,35 @@ def get_user_by_id(user_id):
     else:
         return jsonify({'error': 'User not found'}), 404
 
-
-# Sağlık kontrolü endpoint'i
 @app.route('/health')
 def health():
     return "OK", 200
 
+# -------------------
+# Eureka Registration
+# -------------------
+
+def register_to_eureka():
+    instance_host = "user-service"  # docker-compose service name
+
+    eureka_client.init(
+        eureka_server=EUREKA_URL,
+        app_name="user-service",
+        instance_host=instance_host,
+        instance_port=5001,
+        health_check_url=f"http://{instance_host}:5001/health",
+        home_page_url=f"http://{instance_host}:5001/",
+        status_page_url=f"http://{instance_host}:5001/"
+    )
+
+
+# Register to Eureka immediately
+register_to_eureka()
+
+# -------------------
+# Run
+# -------------------
+
 if __name__ == '__main__':
-    # 0.0.0.0: Konteyner dışından erişim için
-    # debug=True: Geliştirme sırasında hataları görmek için (üretimde False olmalı)
-    # port=5001: User service'in çalışacağı port
     print("🔥 This is the running user-service app.py")
     app.run(debug=True, host='0.0.0.0', port=5001, use_reloader=False)

@@ -12,17 +12,17 @@ app = Flask(__name__)
 
 #Service Discvoery
 
-USER_SERVICE_URL = discover_service("user-service")
-PRODUCT_SERVICE_URL = discover_service("product-service")
-NOTIFICATION_SERVICE_URL = discover_service("notification-service")
+# USER_SERVICE_URL = discover_service("user-service")
+# PRODUCT_SERVICE_URL = discover_service("product-service")
+# NOTIFICATION_SERVICE_URL = discover_service("notification-service")
 
 register_service("order-service", "order-service", 5003)
 
 @app.route('/')
 def index():
     # Kullanıcı ve ürün verilerini al
-    users = requests.get(f"{USER_SERVICE_URL}/users").json()
-    products = requests.get(f"{PRODUCT_SERVICE_URL}/products").json()
+    users = requests.get(f"{discover_service('user-service')}/users").json()
+    products = requests.get(f"{discover_service('product-service')}/products").json()
     return render_template("index.html", users=users, products=products["products"])
 
 @app.route('/order', methods=['POST'])
@@ -31,13 +31,13 @@ def create_order():
     product_id = int(request.form.get("product_id"))
 
     # Kullanıcıyı al
-    users = requests.get(f"{USER_SERVICE_URL}/users").json()
+    users = requests.get(f"{discover_service('user-service')}/users").json()
     user = next((u for u in users if u['id'] == user_id), None)
     if user is None:
         return "User not found", 404
 
     # Ürünü al
-    products = requests.get(f"{PRODUCT_SERVICE_URL}/products").json()["products"]
+    products = requests.get(f"{discover_service('product-service')}/products").json()["products"]
     product = next((p for p in products if p["id"] == product_id), None)
     if product is None:
         return "Product not found", 404
@@ -46,7 +46,7 @@ def create_order():
     notification_data = {
         "message": f"📦 Order created for {user['name']} with product {product['name']}"
     }
-    requests.post(f"{NOTIFICATION_SERVICE_URL}/notify", json=notification_data)
+    requests.post(f"{discover_service('notification-service')}/notify", json=notification_data)
 
     return redirect(url_for('index'))
 

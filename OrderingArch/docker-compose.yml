@@ -11,10 +11,33 @@ services:
     networks:
       - ms-network
 
+  user-service-2:
+    build: ./user-service
+    ports:
+      - "5005:5001"  # dış port farklı
+    volumes:
+      - user_data:/app
+    environment:
+      - FLASK_ENV=development
+    networks:
+      - ms-network
+
+
   product-service:
     build: ./product-service
     ports:
       - "5002:5002"
+    volumes:
+      - product_data:/app
+    environment:
+      - FLASK_ENV=development
+    networks:
+      - ms-network
+
+  product-service-2:
+    build: ./product-service
+    ports:
+      - "5006:5002"  # dış port farklı
     volumes:
       - product_data:/app
     environment:

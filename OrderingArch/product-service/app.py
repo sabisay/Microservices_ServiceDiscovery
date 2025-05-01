@@ -1,10 +1,11 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for
 import sqlite3
-from service_registery import register_service, discover_service
+import socket
+from service_registery import register_service
 
 app = Flask(__name__)
 
-register_service("product-service", "product-service", 5002)
+register_service("product-service",socket.gethostname(), 5002)
 
 DATABASE = 'products.db'
 

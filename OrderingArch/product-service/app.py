@@ -1,7 +1,10 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for
 import sqlite3
+from service_registery import register_service, discover_service
 
 app = Flask(__name__)
+
+register_service("product-service", "product-service", 5002)
 
 DATABASE = 'products.db'
 

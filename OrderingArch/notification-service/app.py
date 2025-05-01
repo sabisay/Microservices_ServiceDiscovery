@@ -1,6 +1,10 @@
 from flask import Flask, jsonify, request, render_template
+from service_registery import register_service, discover_service
 
 app = Flask(__name__)
+
+register_service("notification-service", "notification-service", 5004)
+
 notifications = []
 
 @app.route('/notify', methods=['POST'])

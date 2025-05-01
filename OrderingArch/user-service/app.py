@@ -1,6 +1,11 @@
 import sqlite3
+import socket
+import os
 from flask import Flask, jsonify, request, render_template, redirect, url_for
-from service_registery import register_service, discover_service
+from service_registery import register_service
+
+service_instance_id = os.environ.get("SERVICE_INSTANCE_ID", socket.gethostname())
+register_service("user-service", service_instance_id, 5001)
 
 # Veritabanı dosyasının adı
 DATABASE = 'users.db'
@@ -37,8 +42,6 @@ def init_db():
 init_db()
 
 app = Flask(__name__, template_folder='templates')
-
-register_service("user-service", "user-service", 5001)
 
 # API endpoint: JSON olarak kullanıcı listesi döner
 @app.route('/users')

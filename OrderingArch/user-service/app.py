@@ -1,11 +1,10 @@
 import sqlite3
 import socket
-import os
+
 from flask import Flask, jsonify, request, render_template, redirect, url_for
 from service_registery import register_service
 
-service_instance_id = os.environ.get("SERVICE_INSTANCE_ID", socket.gethostname())
-register_service("user-service", service_instance_id, 5001)
+register_service("user-service", socket.gethostname(), 5001)
 
 # Veritabanı dosyasının adı
 DATABASE = 'users.db'

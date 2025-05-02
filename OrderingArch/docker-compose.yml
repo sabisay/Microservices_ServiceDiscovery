@@ -8,7 +8,6 @@ services:
       - user_data:/app
     environment:
       - FLASK_ENV=development
-      - SERVICE_INSTANCE_ID=user-service-1
     networks:
       - ms-network
 
@@ -20,7 +19,6 @@ services:
       - user_data:/app
     environment:
       - FLASK_ENV=development
-      - SERVICE_INSTANCE_ID=user-service-2
     networks:
       - ms-network
 

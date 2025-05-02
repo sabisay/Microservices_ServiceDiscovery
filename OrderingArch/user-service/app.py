@@ -4,6 +4,9 @@ import socket
 from flask import Flask, jsonify, request, render_template, redirect, url_for
 from service_registery import register_service
 
+
+app = Flask(__name__, template_folder='templates')
+
 register_service("user-service", socket.gethostname(), 5001)
 
 # Veritabanı dosyasının adı
@@ -40,7 +43,7 @@ def init_db():
 # Uygulama başlamadan önce veritabanını başlat
 init_db()
 
-app = Flask(__name__, template_folder='templates')
+
 
 # API endpoint: JSON olarak kullanıcı listesi döner
 @app.route('/users')

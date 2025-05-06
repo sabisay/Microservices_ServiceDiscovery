@@ -62,6 +62,14 @@ services:
     networks:
       - ms-network
 
+  zookeeper:
+    image: zookeeper:3.8
+    ports:
+      - "2181:2181"
+    networks:
+      - ms-network
+    
+
 volumes:
   user_data: {} 
   product_data: {} 

@@ -1,2 +1,2 @@
 flask
-requests
+py_eureka_client

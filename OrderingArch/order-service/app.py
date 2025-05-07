@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, render_template, request, redirect, url_for
 import requests
 from kazoo.client import KazooClient
+from kazoo.exceptions import NodeExistsError
 import socket
 import atexit
 
@@ -15,7 +16,12 @@ service_address = socket.gethostbyname(socket.gethostname())
 
 # Zookeeper'a kayıt
 zk.ensure_path(f"/services/{service_name}")
-zk.create(f"/services/{service_name}/{service_address}:{service_port}", ephemeral=True, makepath=True)
+node_path = f"/services/{service_name}/{service_address}:{service_port}"
+try:
+    zk.create(node_path, ephemeral=True, makepath=True)
+    print(f"✅ Registered {service_name} at {node_path}")
+except NodeExistsError:
+    print(f"⚠️ Node already exists at {node_path}, skipping create.")
 
 # Uygulama kapanınca Zookeeper bağlantısını kapat
 atexit.register(zk.stop)

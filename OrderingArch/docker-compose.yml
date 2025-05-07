@@ -68,7 +68,18 @@ services:
       - "2181:2181"
     networks:
       - ms-network
-    
+  zoonavigator:
+    image: elkozmon/zoonavigator
+    ports:
+      - "9000:9000"
+    environment:
+      - HTTP_PORT=9000
+      - ZOOKEEPER_SERVERS=zookeeper:2181
+    depends_on:
+      - zookeeper
+    networks:
+      - ms-network
+  
 
 volumes:
   user_data: {} 

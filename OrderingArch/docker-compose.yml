@@ -1,5 +1,9 @@
-
 services:
+  eureka-service:
+    build: ../Eureka
+    ports:
+      - "8761:8761"
+
   user-service:
     build: ./user-service
     ports:
@@ -25,14 +29,13 @@ services:
   product-service-2:
     build: ./product-service
     ports:
-      - "5006:5002"  # dış port farklı
+      - "5006:5002" # dış port farklı
     volumes:
       - product_data:/app
     environment:
       - FLASK_ENV=development
     networks:
       - ms-network
-
 
   order-service:
     build:
@@ -63,9 +66,9 @@ services:
       - ms-network
 
 volumes:
-  user_data: {} 
-  product_data: {} 
-  order_data: {} 
+  user_data: {}
+  product_data: {}
+  order_data: {}
 
 networks:
   ms-network:

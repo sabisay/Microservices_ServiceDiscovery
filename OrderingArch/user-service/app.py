@@ -7,7 +7,7 @@ from service_registery import register_service
 
 app = Flask(__name__, template_folder='templates')
 
-register_service("user-service", socket.gethostname(), 5001)
+register_service("user-service", "user-service", 5001)
 
 # Veritabanı dosyasının adı
 DATABASE = 'users.db'

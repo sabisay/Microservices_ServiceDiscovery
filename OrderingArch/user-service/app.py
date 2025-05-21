@@ -29,8 +29,6 @@ def init_db():
         c.execute("SELECT COUNT(*) FROM users")
         if c.fetchone()['COUNT(*)'] == 0:
             print("Initializing database with default users...")
-            c.execute('INSERT INTO users (name) VALUES (?)', ("Alice",))
-            c.execute('INSERT INTO users (name) VALUES (?)', ("Bob",))
             conn.commit()
             print("Default users added.")
         else:
